@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "insightflow-project-candidate",
+  "dataset_version": "1.0.0-candidate",
+  "dataset_purpose": "project_evaluation",
+  "description": "Candidate questions migrated from the legacy dataset. No reliable human Gold Label was found; IDs must be filled from the frozen evaluation corpus after manual review.",
+  "corpus_manifest": "../corpus_manifest.pending.json",
+  "cases": [
+    {
+      "id": "candidate-q1",
+      "query": "What is InsightFlow?",
+      "document_filter_ids": [],
+      "relevant_document_ids": [],
+      "relevant_chunk_ids": [],
+      "reference_answer": null,
+      "key_facts": ["AI research assistant", "personal and team knowledge bases"],
+      "question_type": "single_document_fact",
+      "data_source": {"kind": "legacy_candidate", "path": "eval/test_dataset.json", "legacy_id": "q1"},
+      "label_review_status": "pending_review",
+      "label_review": {"reviewer": null, "reviewed_at": null, "notes": "Map to stable corpus document/chunk IDs and verify all relevant chunks."}
+    },
+    {
+      "id": "candidate-q2",
+      "query": "What are the core features of InsightFlow?",
+      "document_filter_ids": [],
+      "relevant_document_ids": [],
+      "relevant_chunk_ids": [],
+      "reference_answer": null,
+      "key_facts": ["document parsing", "hybrid retrieval", "RAG", "agent workflow"],
+      "question_type": "single_document_multi_fact",
+      "data_source": {"kind": "legacy_candidate", "path": "eval/test_dataset.json", "legacy_id": "q2"},
+      "label_review_status": "pending_review",
+      "label_review": {"reviewer": null, "reviewed_at": null, "notes": "Verify facts and stable IDs against the frozen corpus."}
+    },
+    {
+      "id": "candidate-q3",
+      "query": "What tech stack does InsightFlow use?",
+      "document_filter_ids": [],
+      "relevant_document_ids": [],
+      "relevant_chunk_ids": [],
+      "reference_answer": null,
+      "key_facts": ["FastAPI", "PostgreSQL", "Next.js", "DeepSeek", "Docker"],
+      "question_type": "single_document_multi_fact",
+      "data_source": {"kind": "legacy_candidate", "path": "eval/test_dataset.json", "legacy_id": "q3"},
+      "label_review_status": "pending_review",
+      "label_review": {"reviewer": null, "reviewed_at": null, "notes": "Verify facts and stable IDs against the frozen corpus."}
+    },
+    {
+      "id": "candidate-q4",
+      "query": "Does InsightFlow support BM25 keyword search?",
+      "document_filter_ids": [],
+      "relevant_document_ids": [],
+      "relevant_chunk_ids": [],
+      "reference_answer": null,
+      "key_facts": ["BM25", "keyword retrieval", "hybrid retrieval"],
+      "question_type": "single_document_fact",
+      "data_source": {"kind": "legacy_candidate", "path": "eval/test_dataset.json", "legacy_id": "q4"},
+      "label_review_status": "pending_review",
+      "label_review": {"reviewer": null, "reviewed_at": null, "notes": "Verify facts and stable IDs against the frozen corpus."}
+    },
+    {
+      "id": "candidate-q5",
+      "query": "How is InsightFlow's architecture designed?",
+      "document_filter_ids": [],
+      "relevant_document_ids": [],
+      "relevant_chunk_ids": [],
+      "reference_answer": null,
+      "key_facts": ["user interface", "API", "business service", "data access"],
+      "question_type": "single_document_multi_fact",
+      "data_source": {"kind": "legacy_candidate", "path": "eval/test_dataset.json", "legacy_id": "q5"},
+      "label_review_status": "pending_review",
+      "label_review": {"reviewer": null, "reviewed_at": null, "notes": "Verify facts and stable IDs against the frozen corpus."}
+    },
+    {
+      "id": "candidate-q6",
+      "query": "Compare the retrieval and agent capabilities described across the selected InsightFlow documents.",
+      "document_filter_ids": [],
+      "relevant_document_ids": [],
+      "relevant_chunk_ids": [],
+      "reference_answer": null,
+      "key_facts": [],
+      "question_type": "cross_document_synthesis",
+      "data_source": {"kind": "phase2_authored_candidate", "path": "eval/datasets/candidate_project_v1.json"},
+      "label_review_status": "pending_review",
+      "label_review": {"reviewer": null, "reviewed_at": null, "notes": "Choose at least two frozen corpus documents, set document_filter_ids, and label every supporting chunk."}
+    },
+    {
+      "id": "candidate-q7",
+      "query": "Which selected document provides no evidence for the stated deployment claim?",
+      "document_filter_ids": [],
+      "relevant_document_ids": [],
+      "relevant_chunk_ids": [],
+      "reference_answer": null,
+      "key_facts": [],
+      "question_type": "cross_document_insufficient_evidence",
+      "data_source": {"kind": "phase2_authored_candidate", "path": "eval/datasets/candidate_project_v1.json"},
+      "label_review_status": "pending_review",
+      "label_review": {"reviewer": null, "reviewed_at": null, "notes": "Select controlled documents and verify the negative-evidence label manually."}
+    }
+  ]
+}

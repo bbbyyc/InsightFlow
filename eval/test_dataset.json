@@ -1,0 +1,32 @@
+[
+  {
+    "id": "q1",
+    "question": "What is InsightFlow?",
+    "expected_keywords": ["AI", "knowledge base", "research assistant", "platform"],
+    "expected_doc": "test_doc.md"
+  },
+  {
+    "id": "q2",
+    "question": "What are the core features of InsightFlow?",
+    "expected_keywords": ["document parsing", "hybrid retrieval", "RAG", "agent workflow"],
+    "expected_doc": "test_doc.md"
+  },
+  {
+    "id": "q3",
+    "question": "What tech stack does InsightFlow use?",
+    "expected_keywords": ["FastAPI", "PostgreSQL", "Next.js", "DeepSeek", "Docker"],
+    "expected_doc": "test_doc.md"
+  },
+  {
+    "id": "q4",
+    "question": "Does InsightFlow support BM25 keyword search?",
+    "expected_keywords": ["BM25", "keyword", "hybrid"],
+    "expected_doc": "test_doc.md"
+  },
+  {
+    "id": "q5",
+    "question": "How is InsightFlow's architecture designed?",
+    "expected_keywords": ["layered", "user interface", "API", "business service", "data access"],
+    "expected_doc": "test_doc.md"
+  }
+]

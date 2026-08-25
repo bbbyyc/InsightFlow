@@ -1,0 +1,73 @@
+{
+  "total": 5,
+  "passed": 5,
+  "partial": 0,
+  "failed": 0,
+  "avg_relevance": 5.0,
+  "avg_faithfulness": 5.0,
+  "avg_citation_quality": 3.0,
+  "avg_latency_ms": 5053.0,
+  "avg_tokens": 445.0,
+  "details": [
+    {
+      "id": "q1",
+      "question": "What is InsightFlow?",
+      "answer": "Based on the provided materials, InsightFlow is an AI research assistant platform designed for personal and team knowledge bases [1][2].",
+      "citations": 1,
+      "latency_ms": 7590,
+      "tokens": 398,
+      "relevance": 5,
+      "faithfulness": 5,
+      "citation_quality": 3,
+      "remarks": "The answer directly defines InsightFlow as an AI research assistant platform for knowledge bases, matching the reference keywords. It is faithful to the provided materials and includes citations for each claim."
+    },
+    {
+      "id": "q2",
+      "question": "What are the core features of InsightFlow?",
+      "answer": "Based on the provided materials, the core features of InsightFlow are:\n\n1. **Document Parsing** - Supports PDF, Markdown, TXT, and other formats [1][2]\n2. **Hybrid Retrieval** - Vector retrieval + BM25 keyword retrieval [1][2]\n3. **RAG Q&A** - Knowledge base-based Q&A with citations [1][2]\n4. **Agen",
+      "citations": 1,
+      "latency_ms": 4909,
+      "tokens": 475,
+      "relevance": 5,
+      "faithfulness": 5,
+      "citation_quality": 3,
+      "remarks": "The answer directly addresses the question, lists all core features accurately with citations, and every claim is supported by references."
+    },
+    {
+      "id": "q3",
+      "question": "What tech stack does InsightFlow use?",
+      "answer": "Based on the provided materials, InsightFlow uses the following tech stack:\n\n- **Backend:** FastAPI + PostgreSQL + pgvector [1][2]\n- **Frontend:** Next.js + TypeScript + Tailwind CSS [1][2]\n- **AI:** DeepSeek API [1][2]\n- **Deployment:** Docker Compose [1][2]",
+      "citations": 1,
+      "latency_ms": 3996,
+      "tokens": 393,
+      "relevance": 5,
+      "faithfulness": 5,
+      "citation_quality": 3,
+      "remarks": "The answer directly addresses the question with a clear list of technologies, all claims are supported by the provided materials, and each claim includes a citation."
+    },
+    {
+      "id": "q4",
+      "question": "Does InsightFlow support BM25 keyword search?",
+      "answer": "Yes, InsightFlow supports BM25 keyword search as part of its hybrid retrieval functionality. The \"混合检索\" (Hybrid Retrieval) feature combines vector retrieval with BM25 keyword retrieval [1][2].",
+      "citations": 1,
+      "latency_ms": 4264,
+      "tokens": 456,
+      "relevance": 5,
+      "faithfulness": 5,
+      "citation_quality": 3,
+      "remarks": "The answer directly addresses the question, confirms support for BM25 keyword search, and cites sources for the claims."
+    },
+    {
+      "id": "q5",
+      "question": "How is InsightFlow's architecture designed?",
+      "answer": "Based on the provided materials, InsightFlow uses a **layered architecture** [1][2]. The design is structured as follows:\n\n- **User Interface Layer**\n- **API Route Layer**\n- **Business Service Layer**\n- **Data Access Layer**\n\nAdditionally, the **Business Service Layer** connects to an **AI Service L",
+      "citations": 1,
+      "latency_ms": 4508,
+      "tokens": 505,
+      "relevance": 5,
+      "faithfulness": 5,
+      "citation_quality": 3,
+      "remarks": "The answer directly addresses the question about InsightFlow's architecture, describing the layered design with specific layers and citing sources. All claims are supported by the provided materials, and citations are included for each claim."
+    }
+  ]
+}

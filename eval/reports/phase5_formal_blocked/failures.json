@@ -1,0 +1,173 @@
+{
+  "count": 28,
+  "failures": [
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q1: label_review_status=pending_review"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q1: relevant_document_ids is empty"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q1: relevant_chunk_ids is empty"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q1: human review provenance is incomplete"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q2: label_review_status=pending_review"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q2: relevant_document_ids is empty"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q2: relevant_chunk_ids is empty"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q2: human review provenance is incomplete"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q3: label_review_status=pending_review"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q3: relevant_document_ids is empty"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q3: relevant_chunk_ids is empty"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q3: human review provenance is incomplete"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q4: label_review_status=pending_review"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q4: relevant_document_ids is empty"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q4: relevant_chunk_ids is empty"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q4: human review provenance is incomplete"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q5: label_review_status=pending_review"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q5: relevant_document_ids is empty"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q5: relevant_chunk_ids is empty"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q5: human review provenance is incomplete"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q6: label_review_status=pending_review"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q6: relevant_document_ids is empty"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q6: relevant_chunk_ids is empty"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q6: human review provenance is incomplete"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q7: label_review_status=pending_review"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q7: relevant_document_ids is empty"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q7: relevant_chunk_ids is empty"
+    },
+    {
+      "case_id": "run",
+      "mode": "all",
+      "category": "unreviewed_gold_labels",
+      "message": "candidate-q7: human review provenance is incomplete"
+    }
+  ]
+}

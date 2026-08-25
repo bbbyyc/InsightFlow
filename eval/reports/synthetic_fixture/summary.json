@@ -1,0 +1,121 @@
+{
+  "report_schema_version": "2.0",
+  "status": "synthetic_fixture_completed",
+  "metadata": {
+    "run_started_at": "2026-08-13T08:27:47.033419+00:00",
+    "python": "3.12.13",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "dataset_path": "C:\\Users\\28891\\Desktop\\WORK\\InsightFlow\\eval\\datasets\\synthetic_fixture_v1.json",
+    "dataset_sha256": "850259eec9c85aa4d3c447ed115068ca030ba76ec12977ad94c9f16b1111baf3",
+    "dataset_id": "synthetic-metric-fixture",
+    "dataset_version": "1.0.0",
+    "dataset_purpose": "synthetic_formula_validation",
+    "corpus_manifest": null,
+    "corpus_id": null,
+    "corpus_version": null,
+    "corpus_manifest_sha256": null,
+    "embedding_model": "unavailable",
+    "llm_model": "unavailable",
+    "top_k": 5,
+    "candidate_multiplier": 3,
+    "rrf_k": 60,
+    "random_seed": 20260813,
+    "generation_enabled": false,
+    "llm_judge_enabled": false,
+    "judge_temperature": 0,
+    "modes": [
+      "bm25",
+      "vector",
+      "hybrid"
+    ]
+  },
+  "metrics_by_mode": {
+    "bm25": {
+      "cases": 2,
+      "successful_cases": 2,
+      "recall_at_5": 1.0,
+      "mrr": 0.75,
+      "ndcg_at_5": 0.8467132018086354,
+      "citation_accuracy": null,
+      "answer_faithfulness": null,
+      "retrieval_latency": {
+        "count": 2,
+        "average_ms": 0.0091499996415223,
+        "p50_ms": 0.0091499996415223,
+        "p95_ms": 0.016215000232477905
+      },
+      "generation_latency": {
+        "count": 0,
+        "average_ms": null,
+        "p50_ms": null,
+        "p95_ms": null
+      },
+      "total_latency": {
+        "count": 2,
+        "average_ms": 0.04524999894783832,
+        "p50_ms": 0.04524999894783832,
+        "p95_ms": 0.07985499887581682
+      },
+      "average_total_tokens": null,
+      "token_usage_status": "unavailable"
+    },
+    "vector": {
+      "cases": 2,
+      "successful_cases": 2,
+      "recall_at_5": 1.0,
+      "mrr": 0.75,
+      "ndcg_at_5": 0.7753252713598225,
+      "citation_accuracy": null,
+      "answer_faithfulness": null,
+      "retrieval_latency": {
+        "count": 2,
+        "average_ms": 0.001749999682942871,
+        "p50_ms": 0.001749999682942871,
+        "p95_ms": 0.0023350000446953345
+      },
+      "generation_latency": {
+        "count": 0,
+        "average_ms": null,
+        "p50_ms": null,
+        "p95_ms": null
+      },
+      "total_latency": {
+        "count": 2,
+        "average_ms": 0.009450000106880907,
+        "p50_ms": 0.009450000106880907,
+        "p95_ms": 0.012645000697375508
+      },
+      "average_total_tokens": null,
+      "token_usage_status": "unavailable"
+    },
+    "hybrid": {
+      "cases": 2,
+      "successful_cases": 2,
+      "recall_at_5": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_5": 1.0,
+      "citation_accuracy": null,
+      "answer_faithfulness": null,
+      "retrieval_latency": {
+        "count": 2,
+        "average_ms": 0.0012999998943996616,
+        "p50_ms": 0.0012999998943996616,
+        "p95_ms": 0.00166000017998158
+      },
+      "generation_latency": {
+        "count": 0,
+        "average_ms": null,
+        "p50_ms": null,
+        "p95_ms": null
+      },
+      "total_latency": {
+        "count": 2,
+        "average_ms": 0.006949999260541517,
+        "p50_ms": 0.006949999260541517,
+        "p95_ms": 0.008434999926976161
+      },
+      "average_total_tokens": null,
+      "token_usage_status": "unavailable"
+    }
+  }
+}

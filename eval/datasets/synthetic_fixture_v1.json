@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "synthetic-metric-fixture",
+  "dataset_version": "1.0.0",
+  "dataset_purpose": "synthetic_formula_validation",
+  "description": "Synthetic labels for testing formulas and report plumbing only. Results must never be reported as InsightFlow quality.",
+  "cases": [
+    {
+      "id": "fixture-q1",
+      "query": "synthetic alpha",
+      "document_filter_ids": ["fixture-doc-a", "fixture-doc-b"],
+      "relevant_document_ids": ["fixture-doc-a"],
+      "relevant_chunk_ids": ["fixture-chunk-a1", "fixture-chunk-a2"],
+      "reference_answer": "Synthetic answer [1].",
+      "key_facts": ["alpha"],
+      "question_type": "synthetic_single_document",
+      "data_source": {"kind": "synthetic_fixture", "generator": "handwritten_phase2"},
+      "label_review_status": "approved_human",
+      "label_review": {"reviewer": "fixture-author", "reviewed_at": "2026-08-13T00:00:00+08:00", "notes": "Formula validation only."},
+      "fixture_rankings": {
+        "bm25": ["fixture-chunk-noise", "fixture-chunk-a1", "fixture-chunk-a2"],
+        "vector": ["fixture-chunk-a1", "fixture-chunk-noise", "fixture-chunk-a2"],
+        "hybrid": ["fixture-chunk-a1", "fixture-chunk-a2", "fixture-chunk-noise"]
+      },
+      "fixture_documents": {
+        "fixture-chunk-noise": "fixture-doc-b",
+        "fixture-chunk-a1": "fixture-doc-a",
+        "fixture-chunk-a2": "fixture-doc-a"
+      }
+    },
+    {
+      "id": "fixture-q2",
+      "query": "synthetic beta",
+      "document_filter_ids": [],
+      "relevant_document_ids": ["fixture-doc-b"],
+      "relevant_chunk_ids": ["fixture-chunk-b1"],
+      "reference_answer": "Synthetic beta [1].",
+      "key_facts": ["beta"],
+      "question_type": "synthetic_global",
+      "data_source": {"kind": "synthetic_fixture", "generator": "handwritten_phase2"},
+      "label_review_status": "approved_human",
+      "label_review": {"reviewer": "fixture-author", "reviewed_at": "2026-08-13T00:00:00+08:00", "notes": "Formula validation only."},
+      "fixture_rankings": {
+        "bm25": ["fixture-chunk-b1", "fixture-chunk-noise"],
+        "vector": ["fixture-chunk-noise", "fixture-chunk-b1"],
+        "hybrid": ["fixture-chunk-b1", "fixture-chunk-noise"]
+      },
+      "fixture_documents": {
+        "fixture-chunk-noise": "fixture-doc-a",
+        "fixture-chunk-b1": "fixture-doc-b"
+      }
+    }
+  ]
+}

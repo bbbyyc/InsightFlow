@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+.venv-*/
+venv/
+.env
+*.db
+*_uploads/
+.pytest_cache/
+
+# Node
+node_modules/
+.next/
+out/
+.npm-cache/
+*.tsbuildinfo
+
+# Data
+data/uploads/*
+!data/uploads/.gitkeep
+backend/data/uploads/*
+!backend/data/uploads/.gitkeep
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+pgdata/
+backend/data/model_cache/
