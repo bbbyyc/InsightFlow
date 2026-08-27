@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import mimetypes
 import time
@@ -22,11 +23,13 @@ def main() -> int:
             if not path.is_file():
                 raise SystemExit(f"Demo document not found: {path}")
             mime = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+            idempotency_source = f"{path.resolve()}:{path.stat().st_mtime_ns}"
+            idempotency_key = "demo:" + hashlib.sha256(idempotency_source.encode("utf-8")).hexdigest()
             with path.open("rb") as handle:
                 response = client.post(
                     f"{args.api}/api/documents/upload",
                     files={"file": (path.name, handle, mime)},
-                    headers={"Idempotency-Key": f"demo:{path.resolve()}:{path.stat().st_mtime_ns}"},
+                    headers={"Idempotency-Key": idempotency_key},
                 )
             response.raise_for_status()
             payload = response.json()

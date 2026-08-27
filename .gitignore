@@ -11,6 +11,7 @@ venv/
 *.db
 *_uploads/
 .pytest_cache/
+eval/corpus/local_v1/
 
 # Node
 node_modules/
