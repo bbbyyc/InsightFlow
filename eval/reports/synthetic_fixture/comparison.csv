@@ -1,4 +1,0 @@
-﻿mode,cases,successful_cases,recall_at_5,mrr,ndcg_at_5,citation_accuracy,answer_faithfulness,average_latency_ms,p50_latency_ms,p95_latency_ms,average_total_tokens,token_usage_status
-bm25,2,2,1.0,0.75,0.8467132018086354,,,0.0091499996415223,0.0091499996415223,0.016215000232477905,,unavailable
-vector,2,2,1.0,0.75,0.7753252713598225,,,0.001749999682942871,0.001749999682942871,0.0023350000446953345,,unavailable
-hybrid,2,2,1.0,1.0,1.0,,,0.0012999998943996616,0.0012999998943996616,0.00166000017998158,,unavailable

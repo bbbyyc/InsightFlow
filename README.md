@@ -169,7 +169,7 @@ npm run build
 
 ## 当前验收状态
 
-本工作区已通过 Compose 配置渲染、SQLite 迁移与 31 项后端回归、前端 lint/typecheck/3 项测试/生产构建，以及 Phase 4 的真实宿主浏览器状态验证。当前 Codex 会话无法启动 Docker Desktop（操作系统拒绝访问），所以本次没有把 PostgreSQL/pgvector、Redis、独立 worker、容器 Embedding/DeepSeek 和容器端到端链路标记为已验证。完整证据与后续命令见 `docs/FINAL_ACCEPTANCE.md`。
+本工作区已通过 Compose 配置渲染、SQLite 迁移与 31 项后端回归、前端 lint/typecheck/3 项测试/生产构建，以及 Phase 4 的真实宿主浏览器状态验证。当前 Codex 会话无法启动 Docker Desktop（操作系统拒绝访问），所以本次没有把 PostgreSQL/pgvector、Redis、独立 worker、容器 Embedding/DeepSeek 和容器端到端链路标记为已验证。详细验收过程保留在本地工作记录中。
 
 ## License
 
