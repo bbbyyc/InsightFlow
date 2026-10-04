@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
+from uuid import uuid4
 from pathlib import Path
 
 import httpx
@@ -20,12 +21,12 @@ def wait_task(client: httpx.Client, api: str, task_id: str, timeout: int) -> dic
     raise TimeoutError(f"task {task_id} did not finish in {timeout}s")
 
 
-def upload(client: httpx.Client, api: str, path: Path) -> dict:
+def upload(client: httpx.Client, api: str, path: Path, run_id: str) -> dict:
     with path.open("rb") as handle:
         response = client.post(
             f"{api}/api/documents/upload",
             files={"file": (path.name, handle, "text/markdown")},
-            headers={"Idempotency-Key": f"phase5:{path.name}:{path.stat().st_mtime_ns}"},
+            headers={"Idempotency-Key": f"e2e:{run_id}:{path.name}"},
         )
     response.raise_for_status()
     return response.json()
@@ -58,7 +59,8 @@ def main() -> int:
         ready.raise_for_status()
         print(json.dumps(ready.json(), ensure_ascii=False))
 
-        uploaded = [upload(client, args.api, path) for path in sorted(args.demo_dir.glob("*.md"))]
+        run_id = uuid4().hex
+        uploaded = [upload(client, args.api, path, run_id) for path in sorted(args.demo_dir.glob("*.md"))]
         if len(uploaded) < 2:
             raise RuntimeError("at least two demo Markdown documents are required")
         for item in uploaded:

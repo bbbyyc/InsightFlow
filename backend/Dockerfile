@@ -17,6 +17,11 @@ RUN addgroup --system insightflow && adduser --system --ingroup insightflow insi
     && mkdir -p /app/data/uploads /app/data/evaluations /models/fastembed \
     && chown -R insightflow:insightflow /app /models
 
+RUN sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources \
+    && apt-get -o Acquire::Retries=3 update \
+    && apt-get -o Acquire::Retries=3 install -y --no-install-recommends poppler-utils tesseract-ocr tesseract-ocr-eng tesseract-ocr-chi-sim \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --chown=insightflow:insightflow backend/ /app/
 COPY --chown=insightflow:insightflow eval/ /eval/
 COPY --chown=insightflow:insightflow scripts/ /scripts/

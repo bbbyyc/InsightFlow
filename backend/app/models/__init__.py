@@ -1,4 +1,5 @@
 from app.models.document import Document, DocumentStatus
+from app.models.corpus_revision import CorpusRevision
 from app.models.chunk import Chunk
 from app.models.conversation import Conversation
 from app.models.message import Message

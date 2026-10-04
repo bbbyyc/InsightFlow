@@ -47,6 +47,7 @@ class RetrievalService:
                     FROM chunks c
                     JOIN documents d ON c.document_id = d.id
                     WHERE c.embedding IS NOT NULL
+                      AND d.status = 'COMPLETED'
                       AND 1 - (c.embedding <=> :embedding) >= :threshold
                       {doc_filter}
                 )
@@ -74,6 +75,7 @@ class RetrievalService:
                 FROM chunks c
                 JOIN documents d ON c.document_id = d.id
                 WHERE c.embedding IS NOT NULL
+                  AND d.status = 'COMPLETED'
                   AND 1 - (c.embedding <=> :embedding) >= :threshold
                   {doc_filter}
                 ORDER BY c.embedding <=> :embedding, c.id

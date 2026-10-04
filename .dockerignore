@@ -1,6 +1,11 @@
 .git
 .agents
 .codex
+.pytest_cache
+.venv-phase3
+tmp
+*.docx
+frontend
 .env
 **/.env
 **/__pycache__
@@ -11,6 +16,7 @@
 **/.next
 backend/data
 backend/*_test.db
+backend/*.db
 backend/phase*.db
 backend/phase*_uploads
 data

@@ -4,13 +4,14 @@ import hashlib
 from datetime import datetime, timezone
 from typing import Awaitable, Callable, List
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.models.document import Document, DocumentStatus
 from app.models.chunk import Chunk
 from app.parsers.base import ChunkData
+from app.parsers.quality import DocumentQualityError, validate_extracted_text
 from app.services.parser_registry import get_parser
 from app.services.embedding_service import EmbeddingService
 from app.services.ids import parse_uuid, require_uuid
@@ -56,14 +57,35 @@ class DocumentService:
         try:
             await progress(10, "parsing")
             existing_chunks = await self.get_chunks(str(doc.id))
-            if not existing_chunks:
+            reparse = False
+            try:
+                for item in existing_chunks:
+                    validate_extracted_text(item.content, f"片段 {item.chunk_index + 1}")
+            except DocumentQualityError:
+                if doc.file_type != "pdf":
+                    raise
+                reparse = True
+            if not existing_chunks or reparse:
                 parser = get_parser(doc.file_type)
                 text = parser.parse(doc.file_path)
+                doc.extraction_report = getattr(text, "report", None)
+                validate_extracted_text(text)
                 await progress(35, "chunking")
                 chunk_data_list = parser.chunk(text, settings.chunk_size, settings.chunk_overlap)
+                if not chunk_data_list:
+                    raise DocumentQualityError("文档未生成可检索片段，请检查文件内容或先进行 OCR。")
+                for item in chunk_data_list:
+                    validate_extracted_text(item.content, f"片段 {item.chunk_index + 1}")
+                if reparse:
+                    # Replace only after every new page/chunk passes. Old citation
+                    # snippets remain; FK SET NULL prevents linking to changed text.
+                    await self.db.execute(delete(Chunk).where(Chunk.document_id == doc.id))
                 await self._save_chunks(doc.id, chunk_data_list)
                 chunk_count = len(chunk_data_list)
             else:
+                # Retries/replays must not bypass the quality gate for legacy chunks.
+                for item in existing_chunks:
+                    validate_extracted_text(item.content, f"片段 {item.chunk_index + 1}")
                 chunk_count = len(existing_chunks)
 
             await progress(65, "embedding")
@@ -77,6 +99,10 @@ class DocumentService:
             doc.processed_at = datetime.now(timezone.utc)
             await self.db.commit()
         except Exception as exc:
+            if getattr(exc, "report", None) is not None:
+                doc.extraction_report = exc.report
+            if isinstance(exc, DocumentQualityError):
+                doc.processed_at = None
             doc.status = DocumentStatus.FAILED
             doc.error_message = f"{type(exc).__name__}: {exc}"[:4000]
             await self.db.commit()

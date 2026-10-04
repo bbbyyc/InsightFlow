@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, DateTime, Text, Enum, func, Uuid
+from sqlalchemy import Column, String, Integer, DateTime, Text, Enum, func, Uuid, JSON
 import uuid
 import enum
 
@@ -23,6 +23,7 @@ class Document(Base):
     chunk_count = Column(Integer, default=0)
     content_sha256 = Column(String(64), nullable=True)
     error_message = Column(Text, nullable=True)
+    extraction_report = Column(JSON, nullable=True)
     processed_at = Column(DateTime(timezone=True), nullable=True)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     created_at = Column(DateTime(timezone=True), server_default=func.now())

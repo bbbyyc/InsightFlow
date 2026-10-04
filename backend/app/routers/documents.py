@@ -29,6 +29,7 @@ def document_payload(document, task=None, include_chunks=False, chunks=None):
         "id": str(document.id), "title": document.title, "file_type": document.file_type,
         "status": document.status.value if hasattr(document.status, "value") else str(document.status),
         "chunk_count": document.chunk_count or 0, "error_message": document.error_message,
+        "extraction_report": document.extraction_report,
         "processed_at": document.processed_at.isoformat() if document.processed_at else None,
         "created_at": document.created_at.isoformat() if document.created_at else None,
         "task": serialize_task(task) if task else None,

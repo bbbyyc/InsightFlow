@@ -8,6 +8,7 @@ InsightFlow 是一个可追溯证据的 AI 知识库应用：文档经异步解�
 - Celery + Redis 异步解析、切分、Embedding、入库及幂等 Chunk 写入
 - PostgreSQL + pgvector 持久化文档、Chunk、会话、消息、任务、检索、引用、Agent 事件和评测运行
 - BM25、pgvector、BM25 + vector + RRF 三种检索；显式多文档范围使用软覆盖，不强塞低相关证据
+- BM25 跨请求复用索引，数据库版本号检测跨进程语料变更；并发请求合并构建，分词、建索引和评分在线程中执行
 - 持久化会话、SSE 回答、节点状态/耗时、可靠取消和可点击引用
 - 评测数据门禁、三方案同条件消融、逐题 JSONL、汇总 JSON、CSV、Markdown 和失败分类
 - 无人工审核 Gold Label 时拒绝正式指标，并在页面显示“暂无已验证结果”
@@ -82,6 +83,8 @@ docker compose down -v
 
 Compose 会先运行一次性 `migrate` 服务；迁移成功后 backend/worker 才启动。
 
+当前迁移头为 `0004_bm25_revision`，新增 `corpus_revision` 表和文档/Chunk 变更触发器。升级现有环境时，必须先用新版镜像运行迁移，再启动新版后端；本地开发也必须执行 `alembic upgrade head`。已验证 SQLite 升级、降级再升级及 schema 一致性；后续 Docker 验收也通过 PostgreSQL 新迁移和缓存失效测试。但 PostgreSQL `alembic check` 仍发现 HNSW 索引和 JSON/JSONB 的模型声明差异，详见 运行验收（本地记录）。
+
 ```powershell
 docker compose run --rm migrate
 docker compose run --rm migrate python -m alembic current
@@ -142,13 +145,34 @@ $env:PYTHONPATH='.;../eval'
 python -m pytest tests ../eval/test_metrics.py ../eval/test_dataset.py -q
 
 # 前端
-cd frontend
+cd ../frontend
 npm ci
 npm run lint
 npm run typecheck
 npm test
 npm run build
 ```
+
+## BM25 索引优化与性能复现
+
+此前每次搜索都重新读取全库 Chunk、分词和构建 BM25 索引。现在同一数据库引擎、同一事件循环内复用索引快照，每次搜索读取数据库版本号，语料变更后才重建。版本号随写事务更新，覆盖 Celery、其他 API 进程和直接 SQL 写入；构建前后检查版本，避免发布与版本不一致的快照。
+
+在仓库根目录、已安装后端依赖的 Python 环境中运行：
+
+```powershell
+python scripts/benchmark_bm25_cache.py --chunks 1000 --requests 50
+```
+
+脚本创建临时 SQLite 数据库，不修改应用数据库，也不调用 Embedding 或大模型。2026-09-18 本机结果：
+
+| 模式 | P50 | P95 |
+| --- | ---: | ---: |
+| 每次强制重建索引 | 303.88 ms | 347.27 ms |
+| 版本检查后复用索引 | 2.22 ms | 2.87 ms |
+
+测试使用 1,000 个合成 Chunk，每组 50 次串行请求，分词器已预热；两组排名与分数一致。这是 SQLite 服务层对比，不包含 HTTP、向量检索或生成，不能替代完整 Hybrid 链路压测，也不能直接与旧报告的 10 并发 P95 比较。
+
+每个 API 进程分别持有全库索引；语料变更仍需全量重建，尚未实现增量索引。详细设计、写入竞争与内存边界见 BM25 优化说明（本地记录），原始结果见 基准 JSON（本地记录）。
 
 ## 开发与生产
 
@@ -169,7 +193,15 @@ npm run build
 
 ## 当前验收状态
 
-本工作区已通过 Compose 配置渲染、SQLite 迁移与 31 项后端回归、前端 lint/typecheck/3 项测试/生产构建，以及 Phase 4 的真实宿主浏览器状态验证。当前 Codex 会话无法启动 Docker Desktop（操作系统拒绝访问），所以本次没有把 PostgreSQL/pgvector、Redis、独立 worker、容器 Embedding/DeepSeek 和容器端到端链路标记为已验证。详细验收过程保留在本地工作记录中。
+按验证日期区分，历史通过记录不代表本轮重新执行：
+
+- **2026-09-18/19 Docker 补验：** 恢复 Docker 后构建当前源码镜像，五个常驻服务 healthy，PostgreSQL 迁移到 `0004_bm25_revision`。真实上传两份文档，经 Celery/Embedding 入库，三种检索均返回结果，Agent 流式回答返回 2 条引用且会话可重新读取。PostgreSQL BM25 并发复用、更新和删除失效实测通过。`alembic check` 检测到两项已有声明差异，未将其标为通过；未重跑完整 Hybrid 并发压测或浏览器点击定位。构建环境修复、E2E 幂等键修复与证据见 本轮验收（本地记录）。
+
+- **2026-09-18：** BM25 优化后，后端与评测回归 **38 项通过**，包括并发索引复用、不同数据库连接写入后的失效、增删改、事务回滚和构建期间写入。SQLite 迁移升降级及 `alembic check` 通过；已完成上述服务层性能对比。测试结束仍有既有 SQLAlchemy 连接回收警告。本轮 Docker 引擎未就绪，尚未验证新增 PostgreSQL 触发器、容器端到端性能，也未重跑前端构建。
+- **2026-08-28：** 后续生成语料基准（本地记录）及审计（本地记录）记录了本地 PostgreSQL/pgvector、Redis/Celery、真实 Embedding 的运行验证：20 篇文档、60 个 Chunk、100 条查询及小规模并发测试。这是程序化生成语料，不能作为真实业务效果或生产容量证明。
+- **2026-08-13：** 历史验收（本地记录）记录了 Compose 配置、SQLite 迁移、当时的 31 项后端回归、前端 lint/typecheck/3 项测试/构建和宿主浏览器验证；其中 Docker 阻塞是当时的环境状态，不应覆盖后续验证记录。
+
+目前仍缺少独立人工审核业务测试集、生产负载及多实例高可用验证。
 
 ## License
 

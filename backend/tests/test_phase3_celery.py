@@ -10,6 +10,7 @@ from app.database import async_session
 from app.models import Document, DocumentStatus, TaskStatus
 from app.services.task_service import TaskService
 from app.tasks import process_document_task
+from app.parsers.quality import DocumentQualityError
 
 
 async def create_document_task(prefix: str):
@@ -34,6 +35,21 @@ async def read_task(task_id: str):
 
 
 class Phase3CeleryTests(unittest.TestCase):
+    def test_quality_failure_is_terminal_without_retry(self):
+        task_id, document_id = asyncio.run(create_document_task("quality-failure"))
+        with (
+            patch("app.services.document_service.DocumentService.process_document",
+                  new=AsyncMock(side_effect=DocumentQualityError("bad PDF text"))),
+            patch.object(process_document_task, "retry") as retry,
+            self.assertRaises(DocumentQualityError),
+        ):
+            process_document_task.run(task_id, document_id)
+        retry.assert_not_called()
+        status, attempt, error_type, _ = asyncio.run(read_task(task_id))
+        self.assertEqual(status, TaskStatus.FAILED)
+        self.assertEqual(attempt, 1)
+        self.assertEqual(error_type, "DocumentQualityError")
+
     def test_success_and_repeated_delivery_are_idempotent(self):
         task_id, document_id = asyncio.run(create_document_task("celery-success"))
         with patch(

@@ -1,13 +1,12 @@
 from typing import List, Optional
 from dataclasses import dataclass, field
+import asyncio
+from weakref import WeakKeyDictionary
 
 import jieba
 from rank_bm25 import BM25Okapi
-from sqlalchemy import select, text
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.models.chunk import Chunk
-
 
 @dataclass
 class BM25Result:
@@ -22,13 +21,36 @@ class BM25Result:
     document_type: str = ""
 
 
+@dataclass
+class _Snapshot:
+    revision: int
+    chunks: list[dict]
+    index: BM25Okapi | None
+
+
+@dataclass
+class _Cache:
+    lock: asyncio.Lock = field(default_factory=asyncio.Lock)
+    snapshot: _Snapshot | None = None
+
+
+# Separate databases and event loops must never share locks or corpus data.
+_caches = WeakKeyDictionary()
+
+
 class BM25Service:
 
     def __init__(self, db: AsyncSession):
         self.db = db
-        self._index: BM25Okapi | None = None
-        self._chunks: list[dict] = []
-        self._dirty = True
+        self._dirty = False
+
+    def _cache(self):
+        engine = self.db.get_bind().engine
+        loops = _caches.setdefault(engine, WeakKeyDictionary())
+        return loops.setdefault(asyncio.get_running_loop(), _Cache())
+
+    async def _revision(self):
+        return int(await self.db.scalar(text("SELECT revision FROM corpus_revision WHERE id = 1")))
 
     def _tokenize(self, text: str) -> List[str]:
         if not text:
@@ -44,11 +66,12 @@ class BM25Service:
                        d.title AS document_title, d.file_type AS document_type
                 FROM chunks c
                 JOIN documents d ON c.document_id = d.id
+                WHERE d.status = 'COMPLETED'
                 ORDER BY c.document_id, c.chunk_index
             """)
         )
         rows = result.fetchall()
-        self._chunks = [
+        chunks = [
             {
                 "chunk_id": str(row[0]),
                 "content": row[1],
@@ -61,14 +84,28 @@ class BM25Service:
             }
             for row in rows
         ]
-        if self._chunks:
-            tokenized = [self._tokenize(c["content"]) for c in self._chunks]
-            self._index = BM25Okapi(tokenized)
-        self._dirty = False
+        def build():
+            tokenized = [self._tokenize(c["content"]) for c in chunks]
+            return BM25Okapi(tokenized) if any(tokenized) else None
+
+        return chunks, await asyncio.to_thread(build)
 
     async def _ensure_index(self):
-        if self._dirty or self._index is None:
-            await self._load_chunks()
+        cache = self._cache()
+        async with cache.lock:
+            revision = await self._revision()
+            if not self._dirty and cache.snapshot is not None and cache.snapshot.revision == revision:
+                return cache.snapshot
+            # Never publish a snapshot labelled with a newer revision than its rows.
+            for _ in range(3):
+                chunks, index = await self._load_chunks()
+                after = await self._revision()
+                if revision == after:
+                    cache.snapshot = _Snapshot(revision, chunks, index)
+                    self._dirty = False
+                    return cache.snapshot
+                revision = after
+            raise RuntimeError("Corpus changed repeatedly during BM25 index build; retry the search")
 
     def mark_dirty(self):
         self._dirty = True
@@ -80,9 +117,15 @@ class BM25Service:
         document_ids: Optional[List[str]] = None,
         per_document_limit: int | None = None,
     ) -> List[BM25Result]:
-        await self._ensure_index()
-        if self._index is None:
+        snapshot = await self._ensure_index()
+        if snapshot.index is None or top_k <= 0:
             return []
+
+        return await asyncio.to_thread(
+            self._search_snapshot, snapshot, query, top_k, document_ids, per_document_limit,
+        )
+
+    def _search_snapshot(self, snapshot, query, top_k, document_ids, per_document_limit):
 
         tokens = self._tokenize(query)
         if not tokens:
@@ -92,7 +135,7 @@ class BM25Service:
         mask = None
         if document_ids:
             doc_set = set(document_ids)
-            mask = [i for i, c in enumerate(self._chunks) if c["document_id"] in doc_set]
+            mask = [i for i, c in enumerate(snapshot.chunks) if c["document_id"] in doc_set]
 
         if mask is not None:
             if not mask:
@@ -100,10 +143,10 @@ class BM25Service:
             # Keep corpus-level IDF statistics stable and apply document scope
             # only as a candidate filter. Rebuilding on a two-document scope
             # makes terms present in exactly one document receive an IDF of 0.
-            scores = self._index.get_scores(tokens)
+            scores = snapshot.index.get_scores(tokens)
             indexed = [(i, float(scores[i])) for i in mask if scores[i] > 0]
         else:
-            scores = self._index.get_scores(tokens)
+            scores = snapshot.index.get_scores(tokens)
             indexed = [(i, float(s)) for i, s in enumerate(scores) if s > 0]
 
         indexed.sort(key=lambda x: x[1], reverse=True)
@@ -111,7 +154,7 @@ class BM25Service:
         selected: list[tuple[int, float]] = []
         per_doc_counts: dict[str, int] = {}
         for i, score in indexed:
-            document_id = self._chunks[i]["document_id"]
+            document_id = snapshot.chunks[i]["document_id"]
             if per_document_limit and document_ids:
                 count = per_doc_counts.get(document_id, 0)
                 if count >= per_document_limit:
@@ -123,7 +166,7 @@ class BM25Service:
 
         results: List[BM25Result] = []
         for i, score in selected:
-            c = self._chunks[i]
+            c = snapshot.chunks[i]
             results.append(BM25Result(
                 chunk_id=c["chunk_id"],
                 content=c["content"],

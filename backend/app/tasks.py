@@ -13,6 +13,7 @@ from sqlalchemy.pool import NullPool
 
 from app.config import settings
 from app.services.ids import require_uuid
+from app.parsers.quality import DocumentQualityError
 
 
 celery_app = Celery("insightflow", broker=settings.redis_url, backend=settings.redis_url)
@@ -67,7 +68,7 @@ def process_document_task(self, task_id: str, document_id: str):
             # back before persisting the retry or terminal failure state.
             await session.rollback()
             record = await task_service.get(task_id)
-            if self.request.retries < self.max_retries:
+            if not isinstance(exc, DocumentQualityError) and self.request.retries < self.max_retries:
                 await task_service.mark_retrying(record, exc)
             else:
                 await task_service.mark_failed(record, exc)
@@ -76,7 +77,7 @@ def process_document_task(self, task_id: str, document_id: str):
     try:
         return _run_async(work)
     except Exception as exc:
-        if self.request.retries < self.max_retries:
+        if not isinstance(exc, DocumentQualityError) and self.request.retries < self.max_retries:
             raise self.retry(exc=exc, countdown=settings.task_retry_backoff_seconds * (2 ** self.request.retries))
         raise
 
